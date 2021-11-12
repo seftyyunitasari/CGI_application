@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="content-type" charset="utf-8">
+    <title>CGI Application</title>
+  </head>
+
+  <body>
+    <h1> CGI Application </h1>
+
+    <% require 'pg' %>
+    <% connection = PG::connect(dbname: "goya") %>
+    <% connection.internal_encoding = "UTF-8" %>
+
+    <form action="indicate.cgi" method="post">
+      <p> Please enter the characters below </p>
+      <input type="text" name="input">
+      <input type="submit" name="Send">
+      <br><br><br>
+    </form>
+
+    <% result = connection.exec("SELECT weight, give_for FROM crops;") %>
+    <% data = [] %>
+    <% result.each do |record| %>
+      <% data << "The size of bitter groud: #{record["weight"]} and who sold: #{record["give_for"]}. <br />" %>
+    <% end  %>
+
+    <form action="goya.cgi" method="post">
+      <p> Press the button below to jump to the information page of the size of bitter groud and who sold it <p>
+      <input type="text" name="goya" value="<%= data.join('') %>">
+      <input type="submit" name="Send">
+      <br><br><br>
+    </form>
+
+    <form action="assignment" method="post">
+      <p> Press the button bellow to go to the assignment page </p>
+      <button type="submit" name="button">Click here</button>
+    </form>
+
+  </body>
+</html>

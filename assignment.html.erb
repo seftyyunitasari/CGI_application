@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="content-type" charset="utf-8">
+    <title>Assignment</title>
+  </head>
+
+  <body>
+    <h1> CGI Application </h1>
+
+    <% require 'pg' %>
+    <% connection = PG::connect(dbname: "goya") %>
+    <% connection.internal_encoding = "UTF-8" %>
+
+    <% result1 = connection.exec("SELECT * FROM crops WHERE NOT give_for = '自家消費';") %>
+    <% data1 = [] %>
+    <% result1.each do |record1| %>
+      <% data1 << "length: #{record1["length"]}, weight: #{record1["weight"]}, quality: #{record1["quality"]}, give for: #{record1["give_for"]}, date: #{record1["date"]}. <br />" %>
+    <% end  %>
+
+    <form action="assignment1.cgi" method="post">
+      <p> Press the button below to jump to bitter groud crops information page with self-consumption crops data is excluded <p>
+      <input type="text" name="assignment1" value="<%= data1.join('') %>">
+      <input type="submit" name="Send">
+      <br><br><br>
+    </form>
+
+    <% result2 = connection.exec("SELECT * FROM crops WHERE quality = false;") %>
+    <% data2 = [] %>
+    <% result2.each do |record2| %>
+      <% data2 << "length: #{record2["length"]}, weight: #{record2["weight"]}, quality: #{record2["quality"]}, give for: #{record2["give_for"]}, date: #{record2["date"]}. <br />" %>
+    <% end  %>
+
+    <form action="assignment2.cgi" method="post">
+      <p> Press the button below to jump to the information page of bitter groud crops with poor quality <p>
+      <input type="text" name="assignment2" value="<%= data2.join('') %>">
+      <input type="submit" name="Send">
+      <br><br><br>
+    </form>
+
+
+  </body>
+</html>
